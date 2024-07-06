@@ -35,3 +35,21 @@
 70	706	7419417517750683	CMakeFiles/snek.dir/src/main.cpp.obj	5d72a4ae6d84bce6
 74	1200	7419417517790582	CMakeFiles/snek.dir/src/graphics/stb_image.cpp.obj	384fd2cdc22e2630
 1200	1547	7419417529045834	snek.exe	243af2ffe97182d9
+219	286	7419436416671873	CMakeFiles/copy_assets	91ee32c7f098968
+219	286	7419436416671873	D:/c++ proj/tutorials/snek/cmake-build-debug/CMakeFiles/copy_assets	91ee32c7f098968
+286	1455	7419436417343725	CMakeFiles/snek.dir/src/main.cpp.obj	5d72a4ae6d84bce6
+1456	2337	7419436429032996	snek.exe	243af2ffe97182d9
+16	66	7419437075968533	CMakeFiles/copy_assets	91ee32c7f098968
+16	66	7419437075968533	D:/c++ proj/tutorials/snek/cmake-build-debug/CMakeFiles/copy_assets	91ee32c7f098968
+67	672	7419437076476022	CMakeFiles/snek.dir/src/main.cpp.obj	5d72a4ae6d84bce6
+672	883	7419437082529550	snek.exe	243af2ffe97182d9
+16	63	7419438322292262	CMakeFiles/copy_assets	91ee32c7f098968
+16	63	7419438322292262	D:/c++ proj/tutorials/snek/cmake-build-debug/CMakeFiles/copy_assets	91ee32c7f098968
+63	612	7419438322761008	CMakeFiles/snek.dir/src/main.cpp.obj	5d72a4ae6d84bce6
+613	813	7419438328251850	snek.exe	243af2ffe97182d9
+14	53	7419438442073851	CMakeFiles/copy_assets	91ee32c7f098968
+14	53	7419438442073851	D:/c++ proj/tutorials/snek/cmake-build-debug/CMakeFiles/copy_assets	91ee32c7f098968
+17	58	7419438972642133	CMakeFiles/copy_assets	91ee32c7f098968
+17	58	7419438972642133	D:/c++ proj/tutorials/snek/cmake-build-debug/CMakeFiles/copy_assets	91ee32c7f098968
+58	566	7419438973051022	CMakeFiles/snek.dir/src/main.cpp.obj	5d72a4ae6d84bce6
+566	1015	7419438978134623	snek.exe	243af2ffe97182d9
