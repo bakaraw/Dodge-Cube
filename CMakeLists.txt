@@ -8,7 +8,9 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(${PROJECT_NAME} src/main.cpp
         src/graphics/glad.c
         include/stb_image.h
-        src/graphics/stb_image.cpp)
+        src/graphics/stb_image.cpp
+        src/graphics/Shader.cpp
+        src/graphics/Shader.h)
 
 set(ASSETS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 target_compile_definitions(${PROJECT_NAME} PRIVATE ASSETS_DIRECTORY="${ASSETS_DIRECTORY}")
