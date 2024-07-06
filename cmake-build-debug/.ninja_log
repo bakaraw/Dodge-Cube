@@ -1,0 +1,37 @@
+# ninja log v6
+5	978	7419417114413542	build.ninja	6f02e59653ae3f81
+45	3572	7419404378391855	lib/glfw-3.4/src/CMakeFiles/glfw.dir/init.c.obj	2f7288503cf33df2
+123	2027	7419412631089493	CMakeFiles/snek.dir/src/graphics/glad.c.obj	7f535476527bce32
+61	618	7419414702399845	CMakeFiles/snek.dir/src/main.cpp.obj	5d72a4ae6d84bce6
+58	3605	7419404378511525	lib/glfw-3.4/src/CMakeFiles/glfw.dir/platform.c.obj	320f5771d01d30d8
+41	3588	7419404378352360	lib/glfw-3.4/src/CMakeFiles/glfw.dir/context.c.obj	8d86debecada2ac7
+53	3596	7419404378471645	lib/glfw-3.4/src/CMakeFiles/glfw.dir/monitor.c.obj	e88e6b5b3ee05363
+62	3657	7419404378561390	lib/glfw-3.4/src/CMakeFiles/glfw.dir/vulkan.c.obj	e7a68d829eb6049f
+49	3713	7419404378431749	lib/glfw-3.4/src/CMakeFiles/glfw.dir/input.c.obj	801f5282001f761f
+3605	5809	7419404414000063	lib/glfw-3.4/src/CMakeFiles/glfw.dir/null_init.c.obj	b371348f70a5ed91
+3596	5859	7419404413900331	lib/glfw-3.4/src/CMakeFiles/glfw.dir/osmesa_context.c.obj	7664376b1cba256
+5907	8286	7419404437008585	lib/glfw-3.4/src/CMakeFiles/glfw.dir/win32_time.c.obj	1cce6fbfa6d0fb5a
+6051	8519	7419404438454683	lib/glfw-3.4/src/CMakeFiles/glfw.dir/win32_joystick.c.obj	b647177df7db954c
+3588	5907	7419404413820541	lib/glfw-3.4/src/CMakeFiles/glfw.dir/egl_context.c.obj	113ec0ff47409177
+3657	5923	7419404414508701	lib/glfw-3.4/src/CMakeFiles/glfw.dir/null_monitor.c.obj	9ef2721b80b32525
+3714	5986	7419404415077191	lib/glfw-3.4/src/CMakeFiles/glfw.dir/null_window.c.obj	e6916e9b6a8edfa6
+3574	6051	7419404413680920	lib/glfw-3.4/src/CMakeFiles/glfw.dir/window.c.obj	1928c8f62a623ad
+8287	9871	7419404460808689	lib/glfw-3.4/src/CMakeFiles/glfw.dir/wgl_context.c.obj	9e3b44645790067b
+5859	8217	7419404436529823	lib/glfw-3.4/src/CMakeFiles/glfw.dir/win32_module.c.obj	f38865e92cbc52b9
+1107	1237	7419414712856466	snek.exe	243af2ffe97182d9
+5810	8235	7419404436041132	lib/glfw-3.4/src/CMakeFiles/glfw.dir/null_joystick.c.obj	63c848f5606bf9a0
+5923	8366	7419404437168125	lib/glfw-3.4/src/CMakeFiles/glfw.dir/win32_thread.c.obj	d6dc65c0ddb21c89
+5986	8492	7419404437806410	lib/glfw-3.4/src/CMakeFiles/glfw.dir/win32_init.c.obj	95307d2c0936d4dd
+8217	9934	7419404460110582	lib/glfw-3.4/src/CMakeFiles/glfw.dir/win32_monitor.c.obj	57ee79888a0499ca
+8235	10118	7419404460290083	lib/glfw-3.4/src/CMakeFiles/glfw.dir/win32_window.c.obj	3eb39adbe032714c
+10118	10482	7419404479120484	lib/glfw-3.4/src/libglfw3.a	e4c842759c8fb46e
+14	61	7419414701931123	CMakeFiles/copy_assets	91ee32c7f098968
+14	61	7419414701931123	D:/c++ proj/tutorials/snek/cmake-build-debug/CMakeFiles/copy_assets	91ee32c7f098968
+66	5394	7419412630521003	lib/glm-1.0.1/glm/CMakeFiles/glm.dir/detail/glm.cpp.obj	8362d19b076739f
+5396	11121	7419412683821422	lib/glm-1.0.1/glm/libglm.a	d1285870941c1b6d
+65	1107	7419414702439738	CMakeFiles/snek.dir/src/graphics/stb_image.cpp.obj	384fd2cdc22e2630
+13	70	7419417517182231	CMakeFiles/copy_assets	91ee32c7f098968
+13	70	7419417517182231	D:/c++ proj/tutorials/snek/cmake-build-debug/CMakeFiles/copy_assets	91ee32c7f098968
+70	706	7419417517750683	CMakeFiles/snek.dir/src/main.cpp.obj	5d72a4ae6d84bce6
+74	1200	7419417517790582	CMakeFiles/snek.dir/src/graphics/stb_image.cpp.obj	384fd2cdc22e2630
+1200	1547	7419417529045834	snek.exe	243af2ffe97182d9
