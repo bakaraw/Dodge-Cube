@@ -79,17 +79,10 @@ void Shader::setInt(const std::string &name, int value) const {
     glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-void Shader::setModel(const std::string &name, glm::mat4 model) const {
-    glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(model));
+void Shader::setMat4(const std::string &name, glm::mat4 matrix) const {
+    glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-void Shader::setProjection(const std::string &name, glm::mat4 projection) const {
-    glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(projection));
-}
-
-void Shader::setView(const std::string &name, glm::mat4 view) const {
-    glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(view));
-}
 
 void getCompileError(const GLuint shader, const ShaderType type) {
     int success;
