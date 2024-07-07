@@ -166,7 +166,7 @@ float lastY = 0.0f;
             // model = glm::rotate(model, glm::radians(40.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
             shader.use();
-            shader.setBool("isTextureLoaded", false);
+            shader.setVec4("cubeColor", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
             shader.setMat4("view", view);
             shader.setMat4("projection", projection);
             shader.setMat4("model", model);
@@ -219,6 +219,13 @@ void movePlayer() {
 
         if (pDirection == RIGHT)
             pXTranslate -= pSpeed * deltaTime;
+
+        // player position boundary
+        if(pXTranslate > 3.0f)
+            pXTranslate = 3.0f;
+
+        if (pXTranslate <= -3.0f)
+            pXTranslate = -3.0f;
 
         // if (pDirection == BACKWARD)
         //     pZTranslate -= pSpeed * deltaTime;
