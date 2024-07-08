@@ -6,22 +6,15 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "entities/Player.h"
 
 void initializeGLFW();
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void processInput(GLFWwindow *window);
 void movePlayer();
 
-enum Direction {
-    FORWARD,
-    BACKWARD,
-    LEFT,
-    RIGHT
-};
-
 glm::vec3 cameraPos = glm::vec3(0.0f, 2.0f, -5.0f);
 glm::vec3 cameraFront = glm::normalize(-cameraPos);
-
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 // float yaw = asin(cameraFront.y);
@@ -43,6 +36,10 @@ bool firstMouse = true;
 float lastX = 0.0f;
 float lastY = 0.0f;
 
+float enemySpeed = 5.0f;
+float enemyZ = 10.0f;
+
+Player player(glm::vec3(0.0f, 0.0f, -2.0f));
 
     int main() {
         initializeGLFW();
@@ -67,7 +64,6 @@ float lastY = 0.0f;
 
         // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         Shader shader("assets/shaders/vShader.glsl", "assets/shaders/fShader.glsl");
-
             float vertices[] = {
                 -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
                  0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -149,11 +145,13 @@ float lastY = 0.0f;
         while(!glfwWindowShouldClose(window)) {
             // glfwSetCursorPosCallback(window, mouse_callback);
             processInput(window);
-            movePlayer();
-            glClearColor(97.0f/255.0f, 163.0f/255.0f, 186.0f/255.0f, 1.0f);
+            // movePlayer();
+            // glClearColor(97.0f/255.0f, 163.0f/255.0f, 186.0f/255.0f, 1.0f);
+            glClearColor(15.0f/255.0f, 15.0f/255.0f, 15.0f/255.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+            glBindVertexArray(VAO);
 
             glm::mat4 view;
             view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
@@ -161,19 +159,22 @@ float lastY = 0.0f;
             glm::mat4 projection;
             projection = glm::perspective(glm::radians(60.0f), (float)monitor_width/(float)monitor_height, 0.1f, 100.0f);
 
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(pXTranslate, 0.0f, pZTranslate));
+            glm::mat4 model2 = glm::mat4(1.0f);
+            model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, enemyZ));
             // model = glm::rotate(model, glm::radians(40.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
             shader.use();
-            shader.setVec4("cubeColor", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
             shader.setMat4("view", view);
             shader.setMat4("projection", projection);
-            shader.setMat4("model", model);
+            shader.setVec4("cubeColor", glm::vec4(210.0f/255.0f, 222.0f/255.0f, 50.0f/255.0f, 0.0f));
 
-            // shader.setBool("isTextureLoaded", 0);
-            glBindVertexArray(VAO);
+            player.update(shader);
+
+            shader.setMat4("model", model2);
+            shader.setVec4("cubeColor", glm::vec4(255.0f/255.0f, 7.0f/255.0f, 57.0f/255.0f, 0.0f));
             glDrawArrays(GL_TRIANGLES, 0, 36);
+
+            enemyZ -= enemySpeed * deltaTime;
 
             glfwPollEvents();
             glfwSwapBuffers(window);
@@ -199,11 +200,11 @@ void processInput(GLFWwindow *window) {
         lastFrame = currentFrame;
 
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            pDirection = LEFT;
+            player.processInput(LEFT, deltaTime);
 
 
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            pDirection = RIGHT;
+            player.processInput(RIGHT, deltaTime);
 
         // if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         //     pDirection = BACKWARD;
