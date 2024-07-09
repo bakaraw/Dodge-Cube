@@ -6,6 +6,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include "entities/Enemy.h"
 #include "entities/Player.h"
 
 void initializeGLFW();
@@ -17,29 +19,15 @@ glm::vec3 cameraPos = glm::vec3(0.0f, 2.0f, -5.0f);
 glm::vec3 cameraFront = glm::normalize(-cameraPos);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-// float yaw = asin(cameraFront.y);
-// float pitch = atan2(cameraFront.z, cameraFront.x);
-// if (yaw < 0) {
-//     yaw += 360;
-// }
-
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-
-int pDirection;
-
-float pXTranslate = 0.0f;
-float pZTranslate = -2.0f;
-float pSpeed = 2.5f;
 
 bool firstMouse = true;
 float lastX = 0.0f;
 float lastY = 0.0f;
 
-float enemySpeed = 5.0f;
-float enemyZ = 10.0f;
-
 Player player(glm::vec3(0.0f, 0.0f, -2.0f));
+Enemy enemy(glm::vec3(0.0f, 0.0f, 10.0f));
 
     int main() {
         initializeGLFW();
@@ -159,22 +147,14 @@ Player player(glm::vec3(0.0f, 0.0f, -2.0f));
             glm::mat4 projection;
             projection = glm::perspective(glm::radians(60.0f), (float)monitor_width/(float)monitor_height, 0.1f, 100.0f);
 
-            glm::mat4 model2 = glm::mat4(1.0f);
-            model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, enemyZ));
-            // model = glm::rotate(model, glm::radians(40.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
             shader.use();
             shader.setMat4("view", view);
             shader.setMat4("projection", projection);
             shader.setVec4("cubeColor", glm::vec4(210.0f/255.0f, 222.0f/255.0f, 50.0f/255.0f, 0.0f));
 
             player.update(shader);
+            enemy.update(shader, deltaTime);
 
-            shader.setMat4("model", model2);
-            shader.setVec4("cubeColor", glm::vec4(255.0f/255.0f, 7.0f/255.0f, 57.0f/255.0f, 0.0f));
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-
-            enemyZ -= enemySpeed * deltaTime;
 
             glfwPollEvents();
             glfwSwapBuffers(window);
@@ -213,28 +193,6 @@ void processInput(GLFWwindow *window) {
         //     pDirection = FORWARD;
     }
 
-void movePlayer() {
-
-        if (pDirection == LEFT)
-            pXTranslate += pSpeed * deltaTime;
-
-        if (pDirection == RIGHT)
-            pXTranslate -= pSpeed * deltaTime;
-
-        // player position boundary
-        if(pXTranslate > 3.0f)
-            pXTranslate = 3.0f;
-
-        if (pXTranslate <= -3.0f)
-            pXTranslate = -3.0f;
-
-        // if (pDirection == BACKWARD)
-        //     pZTranslate -= pSpeed * deltaTime;
-        //
-        // if (pDirection == FORWARD)
-        //     pZTranslate += pSpeed * deltaTime;
-
-    }
 
 // void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
 //         if (firstMouse) {

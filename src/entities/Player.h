@@ -24,7 +24,7 @@ public:
     float playerSpeed = 2.5f;
     float deltaTime = 0.0f;
 
-    Player(glm::vec3 initialPosition);
+    Player(glm::vec3 initialPosition): Position(initialPosition){}
     void processInput(Direction direction, float deltaTime);
     void update(Shader &shader);
 

@@ -4,10 +4,6 @@
 
 #include "Player.h"
 
-Player::Player( glm::vec3 initialPosition): Position(initialPosition){
-
-}
-
 void Player::processInput(Direction direction, float deltaTime) {
     float velocity = playerSpeed * deltaTime;
 
