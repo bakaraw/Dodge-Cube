@@ -14,7 +14,9 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/entities/Player.cpp
         src/entities/Player.h
         src/entities/Enemy.cpp
-        src/entities/Enemy.h)
+        src/entities/Enemy.h
+        src/entities/Collision/Box.cpp
+        src/entities/Collision/Box.h)
 
 set(ASSETS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 target_compile_definitions(${PROJECT_NAME} PRIVATE ASSETS_DIRECTORY="${ASSETS_DIRECTORY}")

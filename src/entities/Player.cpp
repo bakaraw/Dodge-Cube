@@ -18,6 +18,9 @@ void Player::processInput(Direction direction, float deltaTime) {
 
     if (Position.x <= -3.0f)
         Position.x = -3.0f;
+
+    boundingBox.min = Position;
+    boundingBox.max = Position + glm::vec3(1.0f);
 }
 
 

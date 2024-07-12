@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "../graphics/Shader.h"
+#include "Collision/Box.h"
 
 enum Direction {
     FORWARD,
@@ -20,11 +21,14 @@ enum Direction {
 class Player {
 public:
     glm::vec3 Position;
+    Box boundingBox;
     int playerDirection;
     float playerSpeed = 2.5f;
     float deltaTime = 0.0f;
 
-    Player(glm::vec3 initialPosition): Position(initialPosition){}
+    Player(glm::vec3 initialPosition)
+    : Position(initialPosition), boundingBox(initialPosition, initialPosition + glm::vec3(1.0f)){}
+
     void processInput(Direction direction, float deltaTime);
     void update(Shader &shader);
 

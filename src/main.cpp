@@ -9,11 +9,15 @@
 
 #include "entities/Enemy.h"
 #include "entities/Player.h"
+#include <vector>
+#include <random>
 
 void initializeGLFW();
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void processInput(GLFWwindow *window);
+void addEnemy(const glm::vec3& position);
 void movePlayer();
+float generateRandomFloat(float min, float max);
 
 glm::vec3 cameraPos = glm::vec3(0.0f, 2.0f, -5.0f);
 glm::vec3 cameraFront = glm::normalize(-cameraPos);
@@ -26,8 +30,10 @@ bool firstMouse = true;
 float lastX = 0.0f;
 float lastY = 0.0f;
 
+float enemyZ = 20.0f;
+
 Player player(glm::vec3(0.0f, 0.0f, -2.0f));
-Enemy enemy(glm::vec3(0.0f, 0.0f, 10.0f));
+std::vector<Enemy> enemies;
 
     int main() {
         initializeGLFW();
@@ -96,6 +102,50 @@ Enemy enemy(glm::vec3(0.0f, 0.0f, 10.0f));
                 -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
             };
 
+        float lightVertices[] = {
+            -0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f,  0.5f, -0.5f,
+             0.5f,  0.5f, -0.5f,
+            -0.5f,  0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
+
+            -0.5f, -0.5f,  0.5f,
+             0.5f, -0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f,
+            -0.5f, -0.5f,  0.5f,
+
+            -0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
+            -0.5f, -0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f,
+
+             0.5f,  0.5f,  0.5f,
+             0.5f,  0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+
+            -0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f,  0.5f,
+             0.5f, -0.5f,  0.5f,
+            -0.5f, -0.5f,  0.5f,
+            -0.5f, -0.5f, -0.5f,
+
+            -0.5f,  0.5f, -0.5f,
+             0.5f,  0.5f, -0.5f,
+             0.5f,  0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f, -0.5f
+        };
+
        //  float vertices[] = {
        //      // positions          // texture coords
        //      0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // top right
@@ -110,31 +160,24 @@ Enemy enemy(glm::vec3(0.0f, 0.0f, 10.0f));
         GLuint VBO, VAO, EBO;
         glGenBuffers(1, &VBO);
         glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &EBO);
 
         glBindVertexArray(VAO);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
 
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
-
-        shader.use();
-
         glEnable(GL_DEPTH_TEST);
+        addEnemy(glm::vec3(generateRandomFloat(-3, 3), 0.0f, enemyZ));
 
+        float startTime = glfwGetTime();
+        float spawnInterval = 7.0f;
         while(!glfwWindowShouldClose(window)) {
-            // glfwSetCursorPosCallback(window, mouse_callback);
             processInput(window);
-            // movePlayer();
-            // glClearColor(97.0f/255.0f, 163.0f/255.0f, 186.0f/255.0f, 1.0f);
             glClearColor(15.0f/255.0f, 15.0f/255.0f, 15.0f/255.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -153,8 +196,20 @@ Enemy enemy(glm::vec3(0.0f, 0.0f, 10.0f));
             shader.setVec4("cubeColor", glm::vec4(210.0f/255.0f, 222.0f/255.0f, 50.0f/255.0f, 0.0f));
 
             player.update(shader);
-            enemy.update(shader, deltaTime);
 
+            // every spawnRate seconds, an enemy will spawn
+            if(glfwGetTime() - startTime >= spawnInterval) {
+                addEnemy(glm::vec3(generateRandomFloat(-3, 3), 0.0f, enemyZ));
+                startTime = glfwGetTime();
+
+            }
+
+            for (Enemy& enemy : enemies) {
+                enemy.update(shader, deltaTime);
+                if (player.boundingBox.collidesWith(enemy.boundingBox)) {
+                    glfwSetWindowShouldClose(window, GL_TRUE);
+                }
+            }
 
             glfwPollEvents();
             glfwSwapBuffers(window);
@@ -171,7 +226,7 @@ void initializeGLFW() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+    // glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 }
 
 void processInput(GLFWwindow *window) {
@@ -191,6 +246,17 @@ void processInput(GLFWwindow *window) {
         //
         // if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         //     pDirection = FORWARD;
+    }
+
+void addEnemy(const glm::vec3 &position) {
+    enemies.push_back(Enemy(position));
+}
+
+float generateRandomFloat(float min, float max) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<float> dis(min, max);
+        return dis(gen);
     }
 
 
