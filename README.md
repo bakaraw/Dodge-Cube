@@ -1,6 +1,6 @@
 
 
-### A Game that is not about Snakes!!! (do not mind repo name)
+### Welcome to Dodge the cube game
 
 - dodge cubes game (yippie)
 
