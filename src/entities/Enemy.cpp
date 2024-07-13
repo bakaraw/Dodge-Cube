@@ -25,8 +25,8 @@ void Enemy::update(Shader &shader, float deltaTime) {
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, Position);
 
+    shader.setVec3("cubeColor", Color);
     shader.setMat4("model", model);
-    shader.setVec4("cubeColor", Color);
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
 

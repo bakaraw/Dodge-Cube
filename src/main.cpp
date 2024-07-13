@@ -3,14 +3,18 @@
 #include <GLFW/glfw3.h>
 #include "graphics/Shader.h"
 #include <stb_image.h>
+
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "glm/gtx/matrix_transform_2d.hpp"
 
 #include "entities/Enemy.h"
 #include "entities/Player.h"
 #include <vector>
 #include <random>
+
 
 void initializeGLFW();
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
@@ -58,49 +62,50 @@ std::vector<Enemy> enemies;
 
         // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         Shader shader("assets/shaders/vShader.glsl", "assets/shaders/fShader.glsl");
-            float vertices[] = {
-                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-                 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        Shader lightShader("assets/shaders/lightShaderV.glsl", "assets/shaders/lightShaderF.glsl");
+        float vertices[] = {
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+             0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-                -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-            };
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+        };
 
         float lightVertices[] = {
             -0.5f, -0.5f, -0.5f,
@@ -166,16 +171,30 @@ std::vector<Enemy> enemies;
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
 
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
+
+        GLuint lightVAO, lightVBO;
+        glGenBuffers(1, &lightVBO);
+        glGenVertexArrays(1, &lightVAO);
+
+        glBindVertexArray(lightVAO);
+
+        glBindBuffer(GL_ARRAY_BUFFER, lightVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(lightVertices), lightVertices, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+
         glEnable(GL_DEPTH_TEST);
         addEnemy(glm::vec3(generateRandomFloat(-3, 3), 0.0f, enemyZ));
 
         float startTime = glfwGetTime();
         float spawnInterval = 7.0f;
+
         while(!glfwWindowShouldClose(window)) {
             processInput(window);
             glClearColor(15.0f/255.0f, 15.0f/255.0f, 15.0f/255.0f, 1.0f);
@@ -193,15 +212,12 @@ std::vector<Enemy> enemies;
             shader.use();
             shader.setMat4("view", view);
             shader.setMat4("projection", projection);
-            shader.setVec4("cubeColor", glm::vec4(210.0f/255.0f, 222.0f/255.0f, 50.0f/255.0f, 0.0f));
 
             player.update(shader);
-
-            // every spawnRate seconds, an enemy will spawn
+            // every spawnInterval seconds, an enemy will spawn
             if(glfwGetTime() - startTime >= spawnInterval) {
                 addEnemy(glm::vec3(generateRandomFloat(-3, 3), 0.0f, enemyZ));
                 startTime = glfwGetTime();
-
             }
 
             for (Enemy& enemy : enemies) {
@@ -210,6 +226,27 @@ std::vector<Enemy> enemies;
                     glfwSetWindowShouldClose(window, GL_TRUE);
                 }
             }
+            glm::mat4 groundModel = glm::mat4(1.0f);
+            groundModel = glm::scale(groundModel, glm::vec3(30.0f, 0.1f, 80.0f));
+            groundModel = glm::translate(groundModel, glm::vec3(0.0f, -20.0f, 0.0f));
+            shader.setVec3("cubeColor", glm::vec3(40 / 255.0f, 40 / 255.0f, 40 / 255.0f));
+            shader.setMat4("model", groundModel);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+
+            glm::vec3 lightPos = glm::vec3(sin(glfwGetTime()), 0.4 * sin(glfwGetTime() * 3) + 2.0f, cos(glfwGetTime()) - 0.3f);
+            shader.setVec3("lightPos", lightPos);
+            shader.setVec3("viewPos", cameraPos);
+            glm::mat4 lightModel = glm::mat4(1.0f);
+            lightModel = glm::translate(lightModel, lightPos);
+            lightModel = glm::scale(lightModel, glm::vec3(0.3f));
+
+            lightShader.use();
+            lightShader.setMat4("view", view);
+            lightShader.setMat4("projection", projection);
+            lightShader.setMat4("model", lightModel);
+
+            glBindVertexArray(lightVAO);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
 
             glfwPollEvents();
             glfwSwapBuffers(window);
@@ -234,11 +271,11 @@ void processInput(GLFWwindow *window) {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
             player.processInput(LEFT, deltaTime);
 
 
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
             player.processInput(RIGHT, deltaTime);
 
         // if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)

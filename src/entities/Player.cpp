@@ -28,6 +28,7 @@ void Player::update(Shader &shader) {
     shader.use();
     glm::mat4 Model = glm::mat4(1.0f);
     Model = glm::translate(Model, Position);
+    shader.setVec3("cubeColor", glm::vec3(210.0f/255.0f, 222.0f/255.0f, 50.0f/255.0f));
     shader.setMat4("model", Model);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }

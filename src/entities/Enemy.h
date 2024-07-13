@@ -13,7 +13,7 @@ class Enemy {
 public:
     Box boundingBox;
     glm::vec3 Position;
-    glm::vec4 Color = glm::vec4(255.0f/255.0f, 7.0f/255.0f, 57.0f/255.0f, 0.0f);
+    glm::vec3 Color = glm::vec3(1.0f, 7.0f/255.0f, 57.0f/255.0f);
     float enemySpeed = 5.0f;
     float deltaTime = 0.0f;
     float enemyZ;
