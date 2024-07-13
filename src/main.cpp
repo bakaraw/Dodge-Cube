@@ -3,46 +3,41 @@
 #include <GLFW/glfw3.h>
 #include "graphics/Shader.h"
 #include <stb_image.h>
+
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "glm/gtx/matrix_transform_2d.hpp"
+
+#include "entities/Enemy.h"
+#include "entities/Player.h"
+#include <vector>
+#include <random>
+
 
 void initializeGLFW();
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void processInput(GLFWwindow *window);
+void addEnemy(const glm::vec3& position);
 void movePlayer();
-
-enum Direction {
-    FORWARD,
-    BACKWARD,
-    LEFT,
-    RIGHT
-};
+float generateRandomFloat(float min, float max);
 
 glm::vec3 cameraPos = glm::vec3(0.0f, 2.0f, -5.0f);
 glm::vec3 cameraFront = glm::normalize(-cameraPos);
-
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-// float yaw = asin(cameraFront.y);
-// float pitch = atan2(cameraFront.z, cameraFront.x);
-// if (yaw < 0) {
-//     yaw += 360;
-// }
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-
-int pDirection;
-
-float pXTranslate = 0.0f;
-float pZTranslate = -2.0f;
-float pSpeed = 2.5f;
 
 bool firstMouse = true;
 float lastX = 0.0f;
 float lastY = 0.0f;
 
+float enemyZ = 20.0f;
+
+Player player(glm::vec3(0.0f, 0.0f, -2.0f));
+std::vector<Enemy> enemies;
 
     int main() {
         initializeGLFW();
@@ -67,50 +62,94 @@ float lastY = 0.0f;
 
         // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         Shader shader("assets/shaders/vShader.glsl", "assets/shaders/fShader.glsl");
+        Shader lightShader("assets/shaders/lightShaderV.glsl", "assets/shaders/lightShaderF.glsl");
+        float vertices[] = {
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+             0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-            float vertices[] = {
-                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-                 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-                -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+        };
 
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-            };
+        float lightVertices[] = {
+            -0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f,  0.5f, -0.5f,
+             0.5f,  0.5f, -0.5f,
+            -0.5f,  0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
+
+            -0.5f, -0.5f,  0.5f,
+             0.5f, -0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f,
+            -0.5f, -0.5f,  0.5f,
+
+            -0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
+            -0.5f, -0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f,
+
+             0.5f,  0.5f,  0.5f,
+             0.5f,  0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+
+            -0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f,  0.5f,
+             0.5f, -0.5f,  0.5f,
+            -0.5f, -0.5f,  0.5f,
+            -0.5f, -0.5f, -0.5f,
+
+            -0.5f,  0.5f, -0.5f,
+             0.5f,  0.5f, -0.5f,
+             0.5f,  0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f, -0.5f
+        };
 
        //  float vertices[] = {
        //      // positions          // texture coords
@@ -126,34 +165,43 @@ float lastY = 0.0f;
         GLuint VBO, VAO, EBO;
         glGenBuffers(1, &VBO);
         glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &EBO);
 
         glBindVertexArray(VAO);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
 
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
 
-        shader.use();
+        GLuint lightVAO, lightVBO;
+        glGenBuffers(1, &lightVBO);
+        glGenVertexArrays(1, &lightVAO);
+
+        glBindVertexArray(lightVAO);
+
+        glBindBuffer(GL_ARRAY_BUFFER, lightVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(lightVertices), lightVertices, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
 
         glEnable(GL_DEPTH_TEST);
+        addEnemy(glm::vec3(generateRandomFloat(-3, 3), 0.0f, enemyZ));
+
+        float startTime = glfwGetTime();
+        float spawnInterval = 7.0f;
 
         while(!glfwWindowShouldClose(window)) {
-            // glfwSetCursorPosCallback(window, mouse_callback);
             processInput(window);
-            movePlayer();
-            glClearColor(97.0f/255.0f, 163.0f/255.0f, 186.0f/255.0f, 1.0f);
+            glClearColor(15.0f/255.0f, 15.0f/255.0f, 15.0f/255.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+            glBindVertexArray(VAO);
 
             glm::mat4 view;
             view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
@@ -161,18 +209,43 @@ float lastY = 0.0f;
             glm::mat4 projection;
             projection = glm::perspective(glm::radians(60.0f), (float)monitor_width/(float)monitor_height, 0.1f, 100.0f);
 
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(pXTranslate, 0.0f, pZTranslate));
-            // model = glm::rotate(model, glm::radians(40.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
             shader.use();
-            shader.setBool("isTextureLoaded", false);
             shader.setMat4("view", view);
             shader.setMat4("projection", projection);
-            shader.setMat4("model", model);
 
-            // shader.setBool("isTextureLoaded", 0);
-            glBindVertexArray(VAO);
+            player.update(shader);
+            // every spawnInterval seconds, an enemy will spawn
+            if(glfwGetTime() - startTime >= spawnInterval) {
+                addEnemy(glm::vec3(generateRandomFloat(-3, 3), 0.0f, enemyZ));
+                startTime = glfwGetTime();
+            }
+
+            for (Enemy& enemy : enemies) {
+                enemy.update(shader, deltaTime);
+                if (player.boundingBox.collidesWith(enemy.boundingBox)) {
+                    glfwSetWindowShouldClose(window, GL_TRUE);
+                }
+            }
+            glm::mat4 groundModel = glm::mat4(1.0f);
+            groundModel = glm::scale(groundModel, glm::vec3(30.0f, 0.1f, 80.0f));
+            groundModel = glm::translate(groundModel, glm::vec3(0.0f, -20.0f, 0.0f));
+            shader.setVec3("cubeColor", glm::vec3(40 / 255.0f, 40 / 255.0f, 40 / 255.0f));
+            shader.setMat4("model", groundModel);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+
+            glm::vec3 lightPos = glm::vec3(sin(glfwGetTime()), 0.4 * sin(glfwGetTime() * 3) + 2.0f, cos(glfwGetTime()) - 0.3f);
+            shader.setVec3("lightPos", lightPos);
+            shader.setVec3("viewPos", cameraPos);
+            glm::mat4 lightModel = glm::mat4(1.0f);
+            lightModel = glm::translate(lightModel, lightPos);
+            lightModel = glm::scale(lightModel, glm::vec3(0.3f));
+
+            lightShader.use();
+            lightShader.setMat4("view", view);
+            lightShader.setMat4("projection", projection);
+            lightShader.setMat4("model", lightModel);
+
+            glBindVertexArray(lightVAO);
             glDrawArrays(GL_TRIANGLES, 0, 36);
 
             glfwPollEvents();
@@ -190,7 +263,7 @@ void initializeGLFW() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+    // glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 }
 
 void processInput(GLFWwindow *window) {
@@ -198,12 +271,12 @@ void processInput(GLFWwindow *window) {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            pDirection = LEFT;
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+            player.processInput(LEFT, deltaTime);
 
 
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            pDirection = RIGHT;
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+            player.processInput(RIGHT, deltaTime);
 
         // if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         //     pDirection = BACKWARD;
@@ -212,21 +285,17 @@ void processInput(GLFWwindow *window) {
         //     pDirection = FORWARD;
     }
 
-void movePlayer() {
+void addEnemy(const glm::vec3 &position) {
+    enemies.push_back(Enemy(position));
+}
 
-        if (pDirection == LEFT)
-            pXTranslate += pSpeed * deltaTime;
-
-        if (pDirection == RIGHT)
-            pXTranslate -= pSpeed * deltaTime;
-
-        // if (pDirection == BACKWARD)
-        //     pZTranslate -= pSpeed * deltaTime;
-        //
-        // if (pDirection == FORWARD)
-        //     pZTranslate += pSpeed * deltaTime;
-
+float generateRandomFloat(float min, float max) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<float> dis(min, max);
+        return dis(gen);
     }
+
 
 // void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
 //         if (firstMouse) {

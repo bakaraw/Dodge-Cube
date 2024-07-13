@@ -81,6 +81,30 @@ build CMakeFiles/snek.dir/src/graphics/Shader.cpp.obj: CXX_COMPILER__snek_unscan
   OBJECT_DIR = CMakeFiles\snek.dir
   OBJECT_FILE_DIR = CMakeFiles\snek.dir\src\graphics
 
+build CMakeFiles/snek.dir/src/entities/Player.cpp.obj: CXX_COMPILER__snek_unscanned_Debug D$:/c++$ proj/tutorials/snek/src/entities/Player.cpp || cmake_object_order_depends_target_snek
+  DEFINES = -DASSETS_DIRECTORY="\"D:/c++ proj/tutorials/snek/assets\""
+  DEP_FILE = CMakeFiles\snek.dir\src\entities\Player.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  INCLUDES = -I"D:/c++ proj/tutorials/snek/snek" -I"D:/c++ proj/tutorials/snek/include" -I"D:/c++ proj/tutorials/snek/lib/glfw-3.4/include" -I"D:/c++ proj/tutorials/snek/lib/glm-1.0.1"
+  OBJECT_DIR = CMakeFiles\snek.dir
+  OBJECT_FILE_DIR = CMakeFiles\snek.dir\src\entities
+
+build CMakeFiles/snek.dir/src/entities/Enemy.cpp.obj: CXX_COMPILER__snek_unscanned_Debug D$:/c++$ proj/tutorials/snek/src/entities/Enemy.cpp || cmake_object_order_depends_target_snek
+  DEFINES = -DASSETS_DIRECTORY="\"D:/c++ proj/tutorials/snek/assets\""
+  DEP_FILE = CMakeFiles\snek.dir\src\entities\Enemy.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  INCLUDES = -I"D:/c++ proj/tutorials/snek/snek" -I"D:/c++ proj/tutorials/snek/include" -I"D:/c++ proj/tutorials/snek/lib/glfw-3.4/include" -I"D:/c++ proj/tutorials/snek/lib/glm-1.0.1"
+  OBJECT_DIR = CMakeFiles\snek.dir
+  OBJECT_FILE_DIR = CMakeFiles\snek.dir\src\entities
+
+build CMakeFiles/snek.dir/src/entities/Collision/Box.cpp.obj: CXX_COMPILER__snek_unscanned_Debug D$:/c++$ proj/tutorials/snek/src/entities/Collision/Box.cpp || cmake_object_order_depends_target_snek
+  DEFINES = -DASSETS_DIRECTORY="\"D:/c++ proj/tutorials/snek/assets\""
+  DEP_FILE = CMakeFiles\snek.dir\src\entities\Collision\Box.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  INCLUDES = -I"D:/c++ proj/tutorials/snek/snek" -I"D:/c++ proj/tutorials/snek/include" -I"D:/c++ proj/tutorials/snek/lib/glfw-3.4/include" -I"D:/c++ proj/tutorials/snek/lib/glm-1.0.1"
+  OBJECT_DIR = CMakeFiles\snek.dir
+  OBJECT_FILE_DIR = CMakeFiles\snek.dir\src\entities\Collision
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target snek
@@ -89,7 +113,7 @@ build CMakeFiles/snek.dir/src/graphics/Shader.cpp.obj: CXX_COMPILER__snek_unscan
 #############################################
 # Link the executable snek.exe
 
-build snek.exe: CXX_EXECUTABLE_LINKER__snek_Debug CMakeFiles/snek.dir/src/main.cpp.obj CMakeFiles/snek.dir/src/graphics/glad.c.obj CMakeFiles/snek.dir/src/graphics/stb_image.cpp.obj CMakeFiles/snek.dir/src/graphics/Shader.cpp.obj | lib/glfw-3.4/src/libglfw3.a lib/glm-1.0.1/glm/libglm.a || copy_assets lib/glfw-3.4/src/libglfw3.a lib/glm-1.0.1/glm/libglm.a
+build snek.exe: CXX_EXECUTABLE_LINKER__snek_Debug CMakeFiles/snek.dir/src/main.cpp.obj CMakeFiles/snek.dir/src/graphics/glad.c.obj CMakeFiles/snek.dir/src/graphics/stb_image.cpp.obj CMakeFiles/snek.dir/src/graphics/Shader.cpp.obj CMakeFiles/snek.dir/src/entities/Player.cpp.obj CMakeFiles/snek.dir/src/entities/Enemy.cpp.obj CMakeFiles/snek.dir/src/entities/Collision/Box.cpp.obj | lib/glfw-3.4/src/libglfw3.a lib/glm-1.0.1/glm/libglm.a || copy_assets lib/glfw-3.4/src/libglfw3.a lib/glm-1.0.1/glm/libglm.a
   FLAGS = -g
   LINK_LIBRARIES = lib/glfw-3.4/src/libglfw3.a  lib/glm-1.0.1/glm/libglm.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\snek.dir
